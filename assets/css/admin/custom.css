@@ -1,0 +1,9 @@
+.main_matrix_label>label {
+    margin: 47px;
+    font-weight: bold;
+}
+
+.cst_blinds {
+    display: inline-block;
+    margin: 12px 12px 12px 0px;
+}
