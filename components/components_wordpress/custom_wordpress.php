@@ -1,34 +1,36 @@
 <?php
-
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
 /** custom Post type Price Groups */
-function custom_post_type()
+function CSTD_custom_post_type()
 {
     // Set UI labels for Custom Post Type
     $labels = array(
-        'name'                => _x('Price Groups', 'Post Type General Name', 'twentytwenty'),
-        'singular_name'       => _x('Price Group', 'Post Type Singular Name', 'twentytwenty'),
-        'menu_name'           => __('Price Groups', 'twentytwenty'),
-        'parent_item_colon'   => __('Parent Price Group', 'twentytwenty'),
-        'all_items'           => __('All Price Groups', 'twentytwenty'),
-        'view_item'           => __('View Price Group', 'twentytwenty'),
-        'add_new_item'        => __('Add New Price Group', 'twentytwenty'),
-        'add_new'             => __('Add New', 'twentytwenty'),
-        'edit_item'           => __('Edit Price Group', 'twentytwenty'),
-        'update_item'         => __('Update Price Group', 'twentytwenty'),
-        'search_items'        => __('Search Price Group', 'twentytwenty'),
-        'not_found'           => __('Not Found', 'twentytwenty'),
-        'not_found_in_trash'  => __('Not found in Trash', 'twentytwenty'),
+        'name'                => _x('Price Groups', 'Post Type General Name', 'cstd'),
+        'singular_name'       => _x('Price Group', 'Post Type Singular Name', 'cstd'),
+        'menu_name'           => __('Price Groups', 'cstd'),
+        'parent_item_colon'   => __('Parent Price Group', 'cstd'),
+        'all_items'           => __('All Price Groups', 'cstd'),
+        'view_item'           => __('View Price Group', 'cstd'),
+        'add_new_item'        => __('Add New Price Group', 'cstd'),
+        'add_new'             => __('Add New', 'cstd'),
+        'edit_item'           => __('Edit Price Group', 'cstd'),
+        'update_item'         => __('Update Price Group', 'cstd'),
+        'search_items'        => __('Search Price Group', 'cstd'),
+        'not_found'           => __('Not Found', 'cstd'),
+        'not_found_in_trash'  => __('Not found in Trash', 'cstd'),
     );
 
     // Set other options for Custom Post Type
     $args = array(
-        'label'               => __('Price Groups', 'twentytwenty'),
-        'description'         => __('Price Group news and reviews', 'twentytwenty'),
+        'label'               => __('Price Groups', 'cstd'),
+        'description'         => __('Price Group for products', 'cstd'),
         'labels'              => $labels,
         // Features this CPT supports in Post Editor
         'supports'            => array('title', 'editor', 'thumbnail'),
         // You can associate this CPT with a taxonomy or custom taxonomy. 
-        'taxonomies'          => array('genres'),
+        'taxonomies'          => array(),
         /* A hierarchical CPT is like Pages and can have
             * Parent and child items. A non-hierarchical CPT
             * is like Posts.
@@ -50,42 +52,32 @@ function custom_post_type()
     // Registering your Custom Post Type
     register_post_type('price-groups', $args);
 }
-add_action('init', 'custom_post_type', 0);
+add_action('init', 'CSTD_custom_post_type', 0);
 
 
-function add_post_meta_boxes()
+function CSTD_add_post_meta_boxes()
 {
     add_meta_box(
         "main_matrix",
-        "Additional Information",
-        "post_meta_box_upload_matrix",
+        "Price Matrix",
+        "CSTD_post_meta_box_upload_matrix",
         "price-groups",
         "advanced",
         "low"
     );
 }
-add_action("admin_init", "add_post_meta_boxes");
+add_action("admin_init", "CSTD_add_post_meta_boxes");
 
-function post_meta_box_upload_matrix()
+function CSTD_post_meta_box_upload_matrix()
 {
     global $post;
 
     $post_id = $post->ID;
     if (!empty($post_id)) {
-        $cst_blinds = get_post_meta($post_id, 'cst_blinds', true);
         $cst_matrix_options = get_post_meta($post_id, 'cst_matrix_options', true);
     }
-    $cst_matrix_options_html = generate_matrix_options_html($cst_matrix_options);
-    $cst_blinds = !empty($cst_blinds) ? $cst_blinds : 'roller';
+    $cst_matrix_options_html = CSTD_generate_matrix_options_html($cst_matrix_options);
     echo "<div>
-            <div class='cst_blinds'>
-                <b>Is Roller Blinds</b> <input type='radio' name='cst_blinds' value='roller' " . ($cst_blinds == "roller" ? "checked" : "") . "/>
-            </div>
-            <div class='cst_blinds'>
-                <b>Is Vertical Blinds</b> <input type='radio' name='cst_blinds' value='vertical' " . ($cst_blinds == "vertical" ? "checked" : "") . "/>
-            </div>
-          </div>
-          <div>
             <input type='file' id='matrix_file' accept='.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'/>
             <input type='button' value='upload' id='upload_matrix_btn'/>
           </div>
@@ -94,10 +86,10 @@ function post_meta_box_upload_matrix()
           </div>";
 }
 
-function generate_matrix_options_html($cst_matrix_options)
+function CSTD_generate_matrix_options_html($cst_matrix_options)
 {
     $cst_matrix_options_html = "";
-    if (check_empty_length($cst_matrix_options)) {
+    if (CSTD_check_empty_length($cst_matrix_options)) {
         $cst_matrix_options_html = '<div class="main_matrix_label"><label>Height (in cm)</label><label>Width (in cm)</label><label>Price</label></div>';
         foreach ($cst_matrix_options as $key => $cst_matrix_option) {
             $height = $cst_matrix_option["height"];
@@ -115,32 +107,31 @@ function generate_matrix_options_html($cst_matrix_options)
     return $cst_matrix_options_html;
 }
 
-function save_post_meta_boxes()
+function CSTD_save_post_meta_boxes()
 {
     global $post; // $post->ID
-    save_post_groups_meta($_POST, $post);
+	
+    CSTD_save_post_groups_meta($_POST, $post);
 }
-add_action('save_post', 'save_post_meta_boxes');
+add_action('save_post', 'CSTD_save_post_meta_boxes');
 
-function save_post_groups_meta($cst_POST, $post)
+function CSTD_save_post_groups_meta($cst_POST, $post)
 {
     if (!empty($post) && $post->post_type == "price-groups") {
         $cst_matrix_options = array();
 
         $post_id = $post->ID;
-        $cst_blinds = $cst_POST['cst_blinds'];
-        update_post_meta($post_id, 'cst_blinds', $cst_blinds);
 
         $cst_height = $cst_POST['cst_height'];
         $cst_width = $cst_POST['cst_width'];
         $cst_price = $cst_POST['cst_price'];
 
-        if (check_empty_length($cst_height) && check_empty_length($cst_width) && check_empty_length($cst_price)) {
+        if (CSTD_check_empty_length($cst_height) && CSTD_check_empty_length($cst_width) && CSTD_check_empty_length($cst_price)) {
             foreach ($cst_height as $key => $value) {
                 $cst_matrix_option = array();
-                $cst_matrix_option["height"] = $value;
-                $cst_matrix_option["width"] = floatval($cst_width[$key]);
-                $cst_matrix_option["price"] = floatval($cst_price[$key]);
+                $cst_matrix_option["height"] = sanitize_text_field($value);
+                $cst_matrix_option["width"] = floatval(sanitize_text_field($cst_width[$key]));
+                $cst_matrix_option["price"] = floatval(sanitize_text_field($cst_price[$key]));
                 $cst_matrix_options[] = $cst_matrix_option;
             }
         }

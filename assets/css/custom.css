@@ -1,3 +1,10 @@
 form.cart,.woodmart-sticky-btn .cart {
     display: none !Important;
 }
+.cstd_error{
+	display:none;
+	color:red;
+}
+.cstd_error label{
+	color:red;
+}

@@ -1,5 +1,5 @@
 /** Ajax */
-function postRequest(dataToSend, action, callBack) {
+function CSTD_postRequest(dataToSend, action, callBack) {
     //applyLoader();
     jQuery.ajax({
         url: ajax_vars.ajaxurl,
@@ -9,25 +9,25 @@ function postRequest(dataToSend, action, callBack) {
             val: dataToSend,
         },
         success: function(resp, aa) {
-            ajaxRequestScucess(resp, callBack)
+            CSTD_ajaxRequestScucess(resp, callBack)
         },
         error: function(xhr) {
-            ajaxRequestError(xhr, callBack)
+            CSTD_ajaxRequestError(xhr, callBack)
         }
     });
 }
 
-function ajaxRequestScucess(resp, callBack) {
+function CSTD_ajaxRequestScucess(resp, callBack) {
     // removeLoader();
     callBack(true, resp);
 }
 
-function ajaxRequestError(xhr, callBack) {
+function CSTD_ajaxRequestError(xhr, callBack) {
     //  removeLoader();
     callBack(false, xhr);
 }
 
-function delay(callback, ms) {
+function CSTD_delay(callback, ms) {
     var timer = 0;
     return function() {
         var context = this,
